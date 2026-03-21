@@ -2,5 +2,87 @@
 /.ssh/ -> providing this path is necessary
 ssh -i ~/.ssh/3-tier-deployment-with-ecr-and-eks.pem ubuntu@ec2-13-126-128-74.ap-south-1.compute.amazonaws.com
 
+
+ssh -i ~/.ssh/3-tier-deployment-with-ecr-and-eks.pem ubuntu@ec2-13-233-250-43.ap-south-1.compute.amazonaws.com
 Add permision to execute this ssh file
 chmod 400 ~/.ssh/3-tier-deployment-with-ecr-and-eks.pem
+
+This is how we can generate ssh key 
+ssh-keygen -t ed25519 -C "prajapatiaakash364@gmail.com"
+
+ls ~/.ssh
+
+with this we can get ssh key id , which we need to add ssh key in my github
+cat ~/.ssh/id_ed25519.pub
+
+ssh -T git@github.com
+
+ls
+
+git clone repo_url like (git clone git@github.com:Aak172003/3-tier-deployment-with-amazon-ecr-and-eks.git)
+
+This is how install docker and update system 
+nano install_docker_amazon.sh
+
+docker --version
+
+This is how run install_docker_amazon after asign execute permission
+./install_docker_amazon.sh
+
+ubuntu@ip-172-31-35-53:~$ docker ps
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+
+to get out from this error we have two option:
+1. either i add my whoami user to docker group , so whoami can able to access docker command 
+2. or give permission to particular socket which show in error (API at unix:///var/run/docker.sock) 
+
+This is how we give permission for access docker to whoami
+sudo chown $USER /var/run/docker.sock
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+This is how build docker image for frontend 
+docker build -t three-tier-frontend .
+
+This is how run docker image 
+docker run -d -p 3000:3000 three-tier-frontend:latest
+
+this is how kill dokcer container 
+docker kill container_id
+
+
+Note : If something prot is running inside my ec2 instance so we have to expose that port from custom tcp , take refrence : 
+Expose-Custom-Tcp-to-Access-running-Port-Inside-EC2-Instance.png
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+Now we need to push docker image to ECR (Elastic Container Resitry) 
+1. we need to configure alws cli into my ec2 machine 
+steps: 
+- curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+- sudo apt install unzip
+- unzip awscliv2.zip
+- sudo ./aws/install -i /usr/local/aws-cli -b /usr/local/bin --update
+- aws configure
+
+so to configure we need an iam user 
+wehere we have attached AdministratorAccess this policy
+after that we have to create access key -> for cli (becuase we are using this iam role from aws cli (command line toll))
+
+This is how it configured 
+aws configure
+AWS Access Key ID [None]: ____________________
+AWS Secret Access Key [None]: ____________________
+Default region name [None]: 
+Default output format [None]: 
+
+-----------------------------------------------------------------------------------------------------------------------
+
+Create a Public ECR 
+Now push command , how we push docker image aws ECR service 
+
+Go to view push command it will show every step 
+

@@ -1,8 +1,9 @@
-const tasks = require("./routes/tasks");
-const connection = require("./db");
-const cors = require("cors");
-const express = require("express");
+import cors from 'cors'
+import express from 'express'
 const app = express();
+import 'dotenv/config'
+import { connection } from './db.js';
+import tasks from './routes/tasks.js';
 
 connection();
 
@@ -10,10 +11,11 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/ok', (req, res) => {
-    res.status(200).send('ok')
-  })
+  res.status(200).send('ok')
+})
 
 app.use("/api/tasks", tasks);
 
-const port = process.env.PORT || 3500;
+const port = process.env.PORT;
+console.log("port :::::: ", port)
 app.listen(port, () => console.log(`Listening on port ${port}...`));
