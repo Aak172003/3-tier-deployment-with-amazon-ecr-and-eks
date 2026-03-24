@@ -1,0 +1,66 @@
+# This is just to tell apps v1 for deployment 
+apiVersion: apps/v1
+# Define Kind 
+kind: Deployment
+# This metadate tell some imformation about deployment
+metadata: 
+  # this is databsde (mongodb) name -> mongodb 
+  name: mongodb
+  namespace: three-tier
+
+# Here define desired state 
+spec:   
+  # i wanted to create just 1 replica of my application
+  replicas: 1
+  selector:
+    # matchlabels api -> metadata name should be same as matchlabels 
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels: 
+        app: mongodb
+    
+# ------------------------------------ Notes --------------------------------------------------------
+
+    # All secret keys are coming from secrets.yaml
+    # So the major things is changes inside spec rest above things same in most of the conatiners
+    spec: 
+      # define container -> pre-reqist to run a container 
+      containers:
+      - name: mon
+        image: mongo:4.4.6
+        command:
+            - "numactl"
+            - "--interleave=all"
+            - "mongod"
+            - "--wiredTigerCacheSizeGB"
+            - "0.1"
+            - "--bind_ip"
+            - "0.0.0.0"
+        ports:
+        # this is container port 
+        - containerPort: 27017
+        # # set env which required for mongodb to successfully run 
+        env: 
+          # Pass mongodb root username 
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+            
+              secretKeyRef:
+                name: mongo-sec
+                key: username
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongo-sec
+                key: password
+        # mount a docker volume which holds data in /data/db path , this is for data inconsistency 
+        volumeMounts:
+          - name: mongo-volume
+            mountPath: /data/db
+      # define docker volume for data persistency
+      volumes: 
+      - name: mongo-volume
+        persistentVolumeClaim:
+          claimName: mongo-volume-claim

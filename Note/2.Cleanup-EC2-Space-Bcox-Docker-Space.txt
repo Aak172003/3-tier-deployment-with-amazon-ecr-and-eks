@@ -1,0 +1,9 @@
+👉 This removes:
+stopped containers
+unused images
+build cache
+
+docker system prune -a
+
+If you want full cleanup:
+docker system prune -a --volumes

@@ -1,0 +1,18 @@
+Why we use Docker -> For ease of Deployment
+
+So basically kubernetes ka cluster bnta hai , below is the way how we can create kubernetes cluster 
+1. minikube 
+2. EKS -> Elastic Kubernetes Service 
+3. AKS -> Azure Kubernetes Service
+4. GKE -> Google Kubernetes Engine (GKE)  
+5. kubeadm
+6. Eks Ctl -> eksctl is a command-line utility tool that automates and simplifies the process of creating, managing, and operating Amazon Elastic Kubernetes Service (Amazon EKS) clusters
+
+Ingress Controller -> for routig purpose ()
+load balancer -> ALB (Application Load Balancer)
+Docker Images will store in ECR (Elastic Container Registory)
+EKS -> In Kubernetes where actually container runs  (Deploye ECR Image on kubernetes)
+How in 3-tier kubernetes will communicate -> using service (Internally all eks communicate via service)
+
+
+First we need work station -> where a deveops enginer do setup 

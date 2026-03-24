@@ -1,0 +1,26 @@
+# Basically service ensure our application internally can able to communicate properly
+# Service is something like other application/Deployments can communicate with mongodb server 
+# It basically give particular port access so some variable so rest application can communicate with this Service name 
+
+
+# This is just to tell v1 for services 
+apiVersion: v1
+# Define Kind 
+kind: Service
+# This metadate tell some imformation about service
+metadata:
+  namespace: three-tier
+  # this is the service name 
+  name: mongodb-svc
+
+# Here define desired state 
+spec:
+  selector:
+    app: mongodb
+  ports:
+  # This is the particular name through which every application can talk
+  # so how we can acces  -> mongodb:// -> here mongodb-svc this becomes host where our mongodb container is running
+  - name: mongodb-svc
+    protocol: TCP
+    port: 27017
+    targetPort: 27017
