@@ -61,6 +61,6 @@ spec:
         env:
           - name: REACT_APP_BACKEND_URL
             # This is hosted backend url on GoDaddy
-            value: "http://backend.amanpathakdevops.study/api/tasks"
+            value: "__________________________"
         ports:
         - containerPort: 3000
