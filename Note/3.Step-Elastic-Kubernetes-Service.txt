@@ -1,0 +1,96 @@
+we need to install eksctl and kubectl tool
+
+kubectl -> kubectl is a kube controller , jisse we are controlling the kubernetes cluster 
+eksctl -> helps to create cluster on amazon EKS 
+
+1. This is how we install kubectl inside ec2-instance
+
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+
+move to because , if don't do this we need to run kubectl like ./kubectl but if we move we just run kubectl instead of ./kubectl
+sudo mv ./kubectl /usr/local/bin
+kubectl version --short --client
+
+2. This is how we install eksctl inside ec2-instance
+
+--silent -> this will not show logs which showing while downloading somethings 
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+
+
+
+3.Setup EKS Cluster
+    1. Setup one cluster
+    This is how create 
+    eksctl create cluster --name three-tier --region ap-south-1 --node-type t3.small --nodes 1
+    This is how delete or remove or kill eks cluster 
+    eksctl delete cluster --region=ap-south-1 --name=three-tier
+
+
+    2. Setup atleast two min and max node 
+    This is how create 
+    eksctl create cluster --name three-tier-kube-two-min-max --region ap-south-1 --node-type t3.small --nodes-min 2 --nodes-max 2
+    This is how delete or remove or kill eks cluster 
+    eksctl delete cluster --region=ap-south-1 --name=three-tier-kube-two-min-max
+
+This is used to create context -> if in kubernetes have more than 1 cluster then this is how we point to any particluar cluster 
+aws eks update-kubeconfig --region ap-south-1 --name three-tier-cluster
+
+4. This is how we can execute and get nodes 
+kubectl get nodes
+
+
+5. Now add ingress load balancer 
+
+    1. get download the iam_policy of ingree load balancer 
+    curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
+
+
+    2. Create a policy so ingress can point to eks cluster 
+    aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicyForEKS --policy-document file://iam_policy.json
+
+    Note: To connect with ingree load balancer to eks cluster we have to use eksctl
+
+    3. now attached polictes (inside eksctl i have to create utils so then our plicy will attached to eksctl)
+    here i open eks cluster and create utils file inside it 
+    eksctl utils associate-iam-oidc-provider --region=ap-south-1 --cluster=three-tier-cluster --approve
+
+    If aws multiple services want to communicate with aws servie like ec2 to load balancer , so we need a service account 
+    4. From now loadbalancer can get into the eks cluster 
+    Now EKS update it's cluster with cloudformation
+    eksctl create iamserviceaccount --cluster=three-tier-cluster --namespace=kube-system --name=aws-load-balancer-controller --role-name AmazonEKSLoadBalancerControllerRoleForEKS --attach-policy-arn=arn:aws:iam::887579662600:policy/AWSLoadBalancerControllerIAMPolicyForEKS --approve --region=ap-south-1
+
+From above 5th step we successfully create service account for load balancer 
+
+Now we need to deploy that load balancer into our eks cluster 
+
+6. Deploy AWS Load Balancer Controller
+    
+    1. Now we install herms ( with the help of herms we can intall charts because we need charts so we don't need to write manually )
+    sudo snap install helm --classic
+
+    2. Now we add eks folder into herms so it can download and put in a single folder 
+    helm repo add eks https://aws.github.io/eks-charts
+
+    3. Update eks charts 
+    helm repo update eks
+
+    4. with this command we can check how much repositories i have 
+    helm repo list
+
+    5. Now we need to install required charts 
+    helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=three-tier-cluster --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller
+
+    6. with this i can check is loadbalancer is working fine or not ? 
+    kubectl get deployment -n kube-system aws-load-balancer-controller
+
+    7. Now we have to apply ingress.yaml file 
+    kubctl apply -f ingress.yaml
+
+    8. How we can get host or address
+    (kubctl get ing -n workshop) -> here workshop means -> three-tier
+
+
+

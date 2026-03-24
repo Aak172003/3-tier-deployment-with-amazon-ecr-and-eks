@@ -1,0 +1,38 @@
+
+# This is just to tell a standard version for ingress controller 
+apiVersion: networking.k8s.io/v1
+# Define Kind 
+kind: Ingress
+
+# This metadate tell some imformation about ingress.yml 
+metadata:
+  # this is main ingress load balancer 
+
+  name: mainlb
+  namespace: three-tier
+  annotations:
+    # make it public like we can access this url via http or https 
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+spec:
+  ingressClassName: alb
+  rules:
+    - host: backend.amanpathakdevops.study
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:   
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port: 
+                  number: 3000
+      

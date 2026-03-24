@@ -1,0 +1,8 @@
+What is Kubernetes: 
+It's and open source system for automating deployment, scaling and management of containerized application
+
+
+Kubernetes solve very important problems : 
+1. Auto Scaling Docker containers
+2. Self-Healing (remove crashed containers and replace with new spinup containers)
+3. Load-Balancing

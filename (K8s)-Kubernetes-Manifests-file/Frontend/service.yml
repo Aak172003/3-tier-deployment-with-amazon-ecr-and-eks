@@ -1,0 +1,25 @@
+
+# Basically service ensure our application internally can able to communicate properly
+# Service is something like other application/Deployments can communicate with mongodb server 
+# It basically give particular port access so some variable so rest application can communicate with this Service name 
+
+
+# This is just to tell v1 for services 
+apiVersion: v1
+# Define Kind 
+kind: Service
+
+# This metadate tell some imformation about service
+metadata: 
+  # this is the service name 
+  name: frontend
+  namespace: three-tier
+
+# Here define desired state  
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+  type: ClusterIP
+  selector:
+    role: frontend

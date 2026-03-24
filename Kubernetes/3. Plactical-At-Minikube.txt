@@ -1,0 +1,63 @@
+This is command line tool that we are going to use intract with kubernetes 
+Install kubctl via homebrew: 
+brew install kubernetes-cli
+
+This is how we can check is properly installed or not 
+kubectl version --client
+
+minikube -> is a single node kuberenetes
+minikube is local Kubernetes, focusing on making it easy to learn and develop for Kubernetes.
+All you need is Docker (or similarly compatible) container or a Virtual Machine environment, and Kubernetes is a single command away: minikube start
+
+Install minikube via homebrew :
+brew install minikube
+
+This is how we can check is properly installed or not 
+minikube version
+
+
+Start minikube 
+here --driver=docker -> means this cluster run isnide the docker 
+minikube start --driver=docker 
+
+First we have to create image that we are going to use inside minikube , 
+because minikube don't know that we having docker images or not , we need to add or get our docker images into minikube 
+
+Kubernetes runs container -> containers come from image -> this means that images we need to create and we need to add to minikube 
+so minikube can see these docker images 
+
+If we do dockeer compose so we can see images inside docker desktop 
+so same a slike minikube have its own docker engine inside the cluster 
+
+
+Run commands step-by-step : 
+
+1. Build Docker Image for Frontend and Backend 
+docker build -t mern-backend:dev ./server
+docker build -t mern-frontend:dev ./client
+
+2. Load this 2 images to minikube 
+minikube image load mern-backend:dev
+minikube image load mern-frontend:dev
+
+Note: If Any pods get deleted so it can't come back 
+That's why here we use deploymenet instead of pods , And deploymenet is work as a pod manager 
+
+3. Create deployment for backend 
+kubectl create deployment backend --image=mern-backend:dev
+
+4. This is how we can check 
+get deployments
+
+4. Set Env Variable 
+kubectl set env deployment/backend MONGO_URI="mongodb+srv://prajapatiaakash364_db_user:poOGDlYwP3aPFo0O@task-manager.oqgu6th.mongodb.net/"
+
+
+kubectl get pods
+
+This is how we can check logs 
+kubectl logs deploy/backend
+
+Port Forward -> forward this port to use 5000 backend port 
+
+

@@ -1,0 +1,66 @@
+# This deployment file will create pods where our application image will running as container 
+
+# This is just to tell apps v1 for deployment 
+apiVersion: apps/v1
+# Define Kind 
+kind: Deployment
+
+# This metadate tell some imformation about deployment
+metadata:
+  # this is frontend name -> api 
+  name: frontend
+  # This is group -> so we can run container in an isolated group 
+  namespace: three-tier   # or Workshop
+  
+  # this is just labels 
+  labels:
+    role: frontend
+    env: demo
+
+
+# Here define desired state 
+spec: 
+  # i wanted to create just 1 replica of my application
+  replicas: 1
+  # If new build comes so old images get replaced with new one 
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  
+  # matchlabels api -> metadata name should be same as matchlabels     
+  selector:
+    matchLabels: 
+      role: frontend
+  template:
+    metadata:
+      labels:
+        role: frontend
+
+# ------------------------------------ Notes --------------------------------------------------------
+    
+    # So the major things is changes inside spec rest above things same in most of the conatiners
+    spec: 
+      
+      # pull image from ecr (elastic contaoiner registory)
+      imagePullSecrets:
+      - name: ecr-registry-secret
+
+      # define container -> pre-reqist to run a container 
+      containers:
+      - name: frontend
+
+        # here need to add proper backend image strung 
+        # How find : Go ECR -> Go Backend Image -> Go Public View Listing -> Then get Image_String
+        image: 407622020962.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
+        imagePullPolicy: Always
+
+
+        # set env which required backend to successfully run 
+        env:
+          - name: REACT_APP_BACKEND_URL
+            # This is hosted backend url on GoDaddy
+            value: "__________________________"
+        ports:
+        - containerPort: 3000

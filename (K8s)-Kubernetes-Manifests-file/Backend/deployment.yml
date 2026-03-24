@@ -1,0 +1,90 @@
+# This deployment file will create pods where our application image will running as container 
+
+
+# This is just to tell apps v1 for deployment 
+apiVersion: apps/v1
+# Define Kind 
+kind: Deployment
+# This metadate tell some imformation about deployment
+metadata: 
+  # this is backend name -> api 
+  name: api
+  # This is group -> so we can run container in an isolated group 
+  namespace: three-tier   # or Workshop
+
+  # this is just labels 
+  labels: 
+    role: api
+    env: demo
+# Here define desired state 
+spec: 
+  # i wanted to create just 1 replica of my application
+  replicas: 1
+  # If new build comes so old images get replaced with new one 
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  # matchlabels api -> metadata name should be same as matchlabels 
+  selector: 
+    matchLabels:
+      role: api
+  
+  template:
+    metadata:
+      labels:
+        role: api
+
+# ------------------------------------ Notes --------------------------------------------------------
+
+    # So the major things is changes inside spec rest above things same in most of the conatiners
+    spec:
+    # pull image from ecr (elastic contaoiner registory)
+      imagePullSecrets:
+      - name: ecr-registry-secret
+      # define container -> pre-reqist to run a container 
+      containers:
+      - name: api
+      # here need to add proper backend image strung 
+      # How find : Go ECR -> Go Backend Image -> Go Public View Listing -> Then get Image_String
+        image: Backend_Image_String 
+        imagePullPolicy: Always
+        # set env which required backend to successfully run 
+        env:
+          # It means before run backend runtainer we have to make sure our mongodb is in runnong state 
+          - name: MONGO_CONN_STR
+            value: mongodb://mongodb-svc:27017/todo?directConnection=true
+          
+          # pass mongodb username 
+          - name: MONGO_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongo-sec
+                key: username
+          
+          # pass mongodb password 
+          - name: MONGO_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongo-sec
+                key: password
+        ports:
+        # this is container port 
+        - containerPort: 8080
+        # here perform check healthchecks with backend container 
+        livenessProbe: 
+          httpGet:
+            path: /ok
+            port: 8080
+          initialDelaySeconds: 2
+          periodSeconds: 5
+
+        # here perform check readiness with backend container 
+        readinessProbe:
+          httpGet:
+            path: /ok
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
