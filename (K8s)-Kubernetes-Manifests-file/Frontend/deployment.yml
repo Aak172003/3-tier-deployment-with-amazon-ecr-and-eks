@@ -60,7 +60,7 @@ spec:
         # set env which required backend to successfully run 
         env:
           - name: REACT_APP_BACKEND_URL
-            # This is hosted backend url on GoDaddy
-            value: "__________________________"
+            # This should be hosted backend url from GoDaddy
+            value: "__________________________" # http://challange.trainwithaakash.com/api/tasks
         ports:
         - containerPort: 3000
