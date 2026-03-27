@@ -2,9 +2,6 @@
 /.ssh/ -> providing this path is necessary
 ssh -i ~/.ssh/3-tier-deployment-with-ecr-and-eks.pem ubuntu@ec2-13-126-128-74.ap-south-1.compute.amazonaws.com
 
-
-ssh -i "~/.ssh/3-tier-deployment-with-ecr-and-eks.pem" ubuntu@ec2-3-110-127-40.ap-south-1.compute.amazonaws.com
-
 Add permision to execute this ssh file
 chmod 400 ~/.ssh/3-tier-deployment-with-ecr-and-eks.pem
 
