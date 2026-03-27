@@ -2,52 +2,52 @@
 ------------------------ MongoDB -> Deploment ------------------------
 
 This will run deploy.yml to create cluster 
-kubctl apply -f deploy.yml
+kubectl apply -f deploy.yml
 
 But befor run above command we need to create a workspace or directory 
-kubctl create namespace three-tier (here three-tier is a workspace)
+kubectl create namespace three-tier (here three-tier is a workspace)
 
-Now this will get an namespace which i created so it will execute kubctl apply -f deploy.yml command 
+Now this will get an namespace which i created so it will execute kubectl apply -f deploy.yml command 
 
 This is how we can see deplooyment in a particular workspace 
 kubectl get deploymenet -n three-tier ( if this show 0/1 ready state -> means not able to get env varibale so it would not able to run ) now pass secrets variables 
 
 This is how pass secrets variable 
-kubctl apply -f secrets.yml
+kubectl apply -f secrets.yml
 
 kubectl get deploymenet -n three-tier ( if this show 1/1 ready state -> means successfully run the mongodb container ) 
 
 This is how we can can make service for mongodb container 
-kubctl apply -f service.yml
+kubectl apply -f service.yml
 
 Now mongodb is ready for internal communication
 
 This is how we can get service inside particular workspace/namespace 
-kubctl get svc -n workspace_name/namespace_name 
+kubectl get svc -n workspace_name/namespace_name 
 
 ------------------------ Backend -> Deploment ------------------------
 
 This will run deployment.yml to create cluster 
-kubctl apply -f deployment.yml
+kubectl apply -f deployment.yml
 
 
 This is how we can can make service for backend container 
-kubctl apply -f service.yml
+kubectl apply -f service.yml
 
 
 This is how we can see logs of a particular container which running inside pods -> and this pods is manages by deplooyment 
 Generally inside every single pod a single container will run as per standard
 
-kubctl log deplooyment_name/tier_name -n namespace_name
+kubectl log deplooyment_name/tier_name -n namespace_name
 
 ------------------------ Frontend -> Deploment ------------------------
 
 This will run deployment.yml to create cluster 
-kubctl apply -f deployment.yml
+kubectl apply -f deployment.yml
 
 
 This is how we can can make service for frontend container 
-kubctl apply -f service.yml
+kubectl apply -f service.yml
 
 
 This is how we can see deplooyment/pods in a particular workspace 
@@ -56,7 +56,7 @@ kubectl get pods -n three-tier
 This is how we can see logs of a particular container which running inside pods -> and this pods is manages by deplooyment 
 Generally inside every single pod a single container will run as per standard
 
-kubctl log deplooyment_name/tier_name -n namespace_name
+kubectl log deplooyment_name/tier_name -n namespace_name
 
 
 ------------------------ Interview Question ------------------------

@@ -87,10 +87,10 @@ Now we need to deploy that load balancer into our eks cluster
     kubectl get deployment -n kube-system aws-load-balancer-controller
 
     7. Now we have to apply ingress.yaml file 
-    kubctl apply -f ingress.yaml
+    kubectl apply -f ingress.yaml
 
     8. How we can get host or address
-    (kubctl get ing -n workshop) -> here workshop means -> three-tier
+    (kubectl get ing -n workshop) -> here workshop means -> three-tier
 
 
 

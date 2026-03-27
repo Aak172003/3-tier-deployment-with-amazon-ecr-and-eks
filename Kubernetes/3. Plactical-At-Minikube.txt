@@ -1,5 +1,5 @@
 This is command line tool that we are going to use intract with kubernetes 
-Install kubctl via homebrew: 
+Install kubectl via homebrew: 
 brew install kubernetes-cli
 
 This is how we can check is properly installed or not 

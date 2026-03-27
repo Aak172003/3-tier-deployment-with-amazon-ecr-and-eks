@@ -31,7 +31,7 @@ eksctl version
 
     2. Setup atleast two min and max node 
     This is how create 
-    eksctl create cluster --name three-tier-kube-two-min-max --region ap-south-1 --node-type t3.small --nodes-min 2 --nodes-max 2
+    eksctl create cluster --name three-tier --region ap-south-1 --node-type t3.small --nodes-min 2 --nodes-max 2
     This is how delete or remove or kill eks cluster 
     eksctl delete cluster --region=ap-south-1 --name=three-tier-kube-two-min-max
 
